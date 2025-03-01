@@ -15,6 +15,19 @@ const (
 	initialSize = 3
 )
 
+// Cell symbols
+const (
+	symbolBorderHorizontal  = '━'
+	symbolBorderVertical    = '┃'
+	symbolBorderTopLeft     = '┏'
+	symbolBorderTopRight    = '┓'
+	symbolBorderBottomLeft  = '┗'
+	symbolBorderBottomRight = '┛'
+	symbolSnakeHead         = '◉'
+	symbolSnakeBody         = '■'
+	symbolFood              = '★'
+)
+
 // Direction represents the snake's movement direction
 type Direction int
 
@@ -104,10 +117,17 @@ func (g *Game) Update() {
 		newHead = Point{X: head.X - 1, Y: head.Y}
 	}
 
-	// Check boundary collision
-	if newHead.X < 0 || newHead.X >= width || newHead.Y < 0 || newHead.Y >= height {
-		g.gameOver = true
-		return
+	// Implement wraparound for walls
+	if newHead.X < 0 {
+		newHead.X = width - 1
+	} else if newHead.X >= width {
+		newHead.X = 0
+	}
+
+	if newHead.Y < 0 {
+		newHead.Y = height - 1
+	} else if newHead.Y >= height {
+		newHead.Y = 0
 	}
 
 	// Check self collision
@@ -137,17 +157,17 @@ func (g *Game) Draw() {
 
 	// Draw border
 	for i := 0; i < width+2; i++ {
-		termbox.SetCell(i, 0, '─', termbox.ColorWhite, termbox.ColorDefault)
-		termbox.SetCell(i, height+1, '─', termbox.ColorWhite, termbox.ColorDefault)
+		termbox.SetCell(i, 0, symbolBorderHorizontal, termbox.ColorWhite, termbox.ColorDefault)
+		termbox.SetCell(i, height+1, symbolBorderHorizontal, termbox.ColorWhite, termbox.ColorDefault)
 	}
 	for i := 0; i < height+2; i++ {
-		termbox.SetCell(0, i, '│', termbox.ColorWhite, termbox.ColorDefault)
-		termbox.SetCell(width+1, i, '│', termbox.ColorWhite, termbox.ColorDefault)
+		termbox.SetCell(0, i, symbolBorderVertical, termbox.ColorWhite, termbox.ColorDefault)
+		termbox.SetCell(width+1, i, symbolBorderVertical, termbox.ColorWhite, termbox.ColorDefault)
 	}
-	termbox.SetCell(0, 0, '┌', termbox.ColorWhite, termbox.ColorDefault)
-	termbox.SetCell(width+1, 0, '┐', termbox.ColorWhite, termbox.ColorDefault)
-	termbox.SetCell(0, height+1, '└', termbox.ColorWhite, termbox.ColorDefault)
-	termbox.SetCell(width+1, height+1, '┘', termbox.ColorWhite, termbox.ColorDefault)
+	termbox.SetCell(0, 0, symbolBorderTopLeft, termbox.ColorWhite, termbox.ColorDefault)
+	termbox.SetCell(width+1, 0, symbolBorderTopRight, termbox.ColorWhite, termbox.ColorDefault)
+	termbox.SetCell(0, height+1, symbolBorderBottomLeft, termbox.ColorWhite, termbox.ColorDefault)
+	termbox.SetCell(width+1, height+1, symbolBorderBottomRight, termbox.ColorWhite, termbox.ColorDefault)
 
 	// Draw score
 	scoreStr := []rune(fmt.Sprintf("Score: %d", g.score))
@@ -156,12 +176,17 @@ func (g *Game) Draw() {
 	}
 
 	// Draw snake
-	for _, p := range g.snake {
-		termbox.SetCell(p.X+1, p.Y+1, '■', termbox.ColorGreen, termbox.ColorDefault)
+	for i, p := range g.snake {
+		symbol := symbolSnakeBody
+		if i == 0 {
+			// First segment is the head
+			symbol = symbolSnakeHead
+		}
+		termbox.SetCell(p.X+1, p.Y+1, symbol, termbox.ColorGreen, termbox.ColorDefault)
 	}
 
 	// Draw food
-	termbox.SetCell(g.food.X+1, g.food.Y+1, '●', termbox.ColorRed, termbox.ColorDefault)
+	termbox.SetCell(g.food.X+1, g.food.Y+1, symbolFood, termbox.ColorRed, termbox.ColorDefault)
 
 	// Game over message
 	if g.gameOver {
