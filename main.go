@@ -25,7 +25,7 @@ const (
 
 // Food types and values
 var (
-	foodSymbols = []rune{'🥝', '🍅', '🧀', '🍬'}
+	foodSymbols = []rune{'🍆', '🍗', '🧀', '🍬'}
 	foodValues  = []int{1, 3, 5, 7}
 )
 
@@ -271,7 +271,7 @@ func (g *Game) Draw() {
 	// Game over message (centered in game area)
 	if g.gameOver {
 		gameOverX := sidebarWidth + width/2
-		gameOverMsg := "Game Over! Press 'q' to quit or 'r' to restart."
+		gameOverMsg := "Game Over!\n\rPress 'q' to quit or 'r' to restart."
 		scoreMsg := fmt.Sprintf("Final Score: %d", g.score)
 
 		for i, ch := range []rune(gameOverMsg) {
@@ -309,7 +309,7 @@ func drawSidebar(g *Game) {
 	}
 
 	// Draw food value table header with minimal styling
-	tableHeader := "FOOD VALUES"
+	tableHeader := " "
 	for i, ch := range []rune(tableHeader) {
 		termbox.SetCell(sidebarWidth/2-len(tableHeader)/2+i, 5, ch, termbox.ColorWhite, termbox.ColorDefault)
 	}
