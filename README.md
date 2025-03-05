@@ -25,7 +25,9 @@ go run main.go
 
 ## Gameplay
 
-Simply use arrow keys (↑, →, ↓, ←) to control the snake's direction and eat as much food as you can
+Simply use arrow keys (↑, →, ↓, ←) to control the snake's direction and eat as much food as you can:
+
+![Gameplay](/gameplay.mp4)
 
 ## License
 
